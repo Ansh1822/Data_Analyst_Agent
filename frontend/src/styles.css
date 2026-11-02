@@ -23,7 +23,7 @@ code, pre { font-family: var(--mono); font-size: 12.5px; }
 .schema ul { list-style: none; padding: 0; margin: 6px 0 0; max-height: 180px; overflow: auto; font-size: 13px; }
 .schema li { padding: 2px 0; }
 .field { display: flex; flex-direction: column; gap: 6px; font-weight: 500; }
-textarea { font: inherit; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; resize: vertical; }
+textarea, .text { font: inherit; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; resize: vertical; }
 
 .btn { background: var(--accent); color: #fff; border: 0; border-radius: 6px; padding: 10px 14px; font: 600 14px var(--sans); cursor: pointer; }
 .btn:disabled { background: #9fb5b8; cursor: not-allowed; }

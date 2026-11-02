@@ -1,16 +1,17 @@
 """Section 6 - API layer: upload a CSV, stream an agent run over SSE, serve charts."""
+import hmac
 import json
 import re
 import shutil
 import uuid
 
 import pandas as pd
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, Header, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 from pydantic import BaseModel
 
-from .config import CORS_ORIGINS, MAX_UPLOAD_MB, RUNS_DIR
+from .config import ACCESS_CODE, CORS_ORIGINS, MAX_UPLOAD_MB, RUNS_DIR
 from .graph import graph
 from .profiler import load_csv, profile_dataframe
 
@@ -26,6 +27,11 @@ class AnalyzeRequest(BaseModel):
     question: str = ""
 
 
+def require_access(x_access_code: str = Header(default="")):
+    if ACCESS_CODE and not hmac.compare_digest(x_access_code, ACCESS_CODE):
+        raise HTTPException(401, "Wrong or missing access code.")
+
+
 def sse(payload: dict) -> str:
     return f"event: {payload['type']}\ndata: {json.dumps(payload)}\n\n"
 
@@ -35,7 +41,7 @@ def health():
     return {"ok": True}
 
 
-@app.post("/api/upload")
+@app.post("/api/upload", dependencies=[Depends(require_access)])
 async def upload(file: UploadFile = File(...)):
     if not (file.filename or "").lower().endswith(".csv"):
         raise HTTPException(400, "Upload a .csv file.")
@@ -57,7 +63,7 @@ async def upload(file: UploadFile = File(...)):
     return {"dataset_id": dataset_id, "filename": file.filename, **profile_dataframe(df)}
 
 
-@app.post("/api/analyze")
+@app.post("/api/analyze", dependencies=[Depends(require_access)])
 async def analyze(req: AnalyzeRequest):
     if not ID_RE.match(req.dataset_id):
         raise HTTPException(400, "Invalid dataset id.")

@@ -1,17 +1,19 @@
+import { API } from "./config.js";
+
 // Section 7 - API client. Upload is plain fetch; the analysis is a streamed POST (SSE).
-export async function uploadCsv(file) {
+export async function uploadCsv(file, accessCode = "") {
   const body = new FormData();
   body.append("file", file);
-  const res = await fetch("/api/upload", { method: "POST", body });
+  const res = await fetch(`${API}/api/upload`, { method: "POST", body, headers: { "X-Access-Code": accessCode } });
   if (!res.ok) throw new Error((await res.json().catch(() => ({}))).detail || "Upload failed");
   return res.json();
 }
 
 // EventSource only supports GET, so we read the POST response stream by hand.
-export async function streamAnalyze({ datasetId, question, onEvent, signal }) {
-  const res = await fetch("/api/analyze", {
+export async function streamAnalyze({ datasetId, question, accessCode = "", onEvent, signal }) {
+  const res = await fetch(`${API}/api/analyze`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "X-Access-Code": accessCode },
     body: JSON.stringify({ dataset_id: datasetId, question }),
     signal,
   });

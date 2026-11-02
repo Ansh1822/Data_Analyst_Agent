@@ -1,4 +1,5 @@
 import ReactMarkdown from "react-markdown";
+import { API } from "../config.js";
 
 export default function Report({ markdown }) {
   if (!markdown) return null;
@@ -14,7 +15,11 @@ export default function Report({ markdown }) {
         <h2>Report</h2>
         <button className="btn small" onClick={download}>Download Markdown</button>
       </div>
-      <ReactMarkdown>{markdown}</ReactMarkdown>
+      <ReactMarkdown
+        components={{ img: ({ src, alt }) => <img alt={alt} src={src?.startsWith("/api/") ? `${API}${src}` : src} /> }}
+      >
+        {markdown}
+      </ReactMarkdown>
     </section>
   );
 }

@@ -20,3 +20,6 @@ MAX_FIX_ATTEMPTS = int(os.getenv("MAX_FIX_ATTEMPTS", "3"))  # retries after the 
 MAX_STEPS = int(os.getenv("MAX_STEPS", "5"))
 MAX_UPLOAD_MB = int(os.getenv("MAX_UPLOAD_MB", "25"))
 CORS_ORIGINS = [o.strip() for o in os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",")]
+
+# If set, /api/upload and /api/analyze require the header X-Access-Code to match (protects a public deployment).
+ACCESS_CODE = os.getenv("ACCESS_CODE", "")

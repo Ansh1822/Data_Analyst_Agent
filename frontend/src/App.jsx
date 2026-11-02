@@ -46,6 +46,7 @@ function reducer(state, ev) {
 export default function App() {
   const [dataset, setDataset] = useState(null);
   const [question, setQuestion] = useState("");
+  const [accessCode, setAccessCode] = useState("");
   const [uploadError, setUploadError] = useState("");
   const [run, dispatch] = useReducer(reducer, idle);
   const abortRef = useRef(null);
@@ -56,7 +57,7 @@ export default function App() {
     if (!file) return;
     setUploadError("");
     try {
-      setDataset(await uploadCsv(file));
+      setDataset(await uploadCsv(file, accessCode));
       dispatch({ type: "clear" });
     } catch (err) {
       setDataset(null);
@@ -71,6 +72,7 @@ export default function App() {
       await streamAnalyze({
         datasetId: dataset.dataset_id,
         question,
+        accessCode,
         onEvent: (ev) => dispatch(ev),
         signal: abortRef.current.signal,
       });
@@ -84,6 +86,11 @@ export default function App() {
       <aside className="side">
         <h1>Data Analyst Agent</h1>
         <p className="muted">Upload a CSV, ask a question, and watch the agent plan, write code, fix its own errors, and report.</p>
+
+        <label className="field">
+          Access code (if required)
+          <input className="text" type="password" value={accessCode} onChange={(e) => setAccessCode(e.target.value)} disabled={running} />
+        </label>
 
         <label className="drop">
           <input type="file" accept=".csv" onChange={onFile} disabled={running} />

@@ -1,3 +1,5 @@
+import { API } from "../config.js";
+
 const LABEL = { pending: "Waiting", running: "Working", ok: "Done", failed: "Failed" };
 
 function lastLine(text = "") {
@@ -17,7 +19,7 @@ function Attempt({ attempt, runId }) {
       <pre className="code">{attempt.code}</pre>
       {r && <pre className="out">{(r.ok ? r.stdout : r.stderr) || "(no output)"}</pre>}
       {r?.charts.map((c) => (
-        <img key={c} className="chart" alt={c} src={`/api/runs/${runId}/charts/${c}`} />
+        <img key={c} className="chart" alt={c} src={`${API}/api/runs/${runId}/charts/${c}`} />
       ))}
     </details>
   );
