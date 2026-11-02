@@ -12,7 +12,7 @@ RUNS_DIR = Path(os.getenv("RUNS_DIR", BASE_DIR / "workspace"))
 (RUNS_DIR / "runs").mkdir(parents=True, exist_ok=True)
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-MODEL = os.getenv("ANALYST_MODEL", "llama-3.1-8b-instant")  # free on Groq; see console.groq.com/docs/models
+MODEL = os.getenv("ANALYST_MODEL", "openai/gpt-oss-120b")  # free on Groq; see console.groq.com/docs/models
 SANDBOX_MODE = os.getenv("SANDBOX_MODE", "local")  # local | docker
 SANDBOX_IMAGE = os.getenv("SANDBOX_IMAGE", "analyst-sandbox")
 SANDBOX_TIMEOUT = int(os.getenv("SANDBOX_TIMEOUT", "60"))
